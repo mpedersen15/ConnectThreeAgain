@@ -4,7 +4,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,8 +22,10 @@ public class MainActivity extends AppCompatActivity {
     public void placePiece(View view) {
 
         ImageView current = (ImageView) view;
+        TextView instructions = (TextView) findViewById(R.id.instructionsText);
+        Button playAgainButton = (Button) findViewById(R.id.playAgainButton);
 
-        if (current.getDrawable() == null){ // only allow for
+        if (current.getDrawable() == null){ // only allow pieces to be placed on empty spaces
 
             current.setTranslationY(-1000f);
 
@@ -34,8 +39,12 @@ public class MainActivity extends AppCompatActivity {
 
                 if (playerHasWon){
                     Log.i("MattInfo", "RED has won!");
+                    instructions.setText("RED has won!");
+                    playAgainButton.setVisibility(View.VISIBLE);
+                    playAgainButton.animate().alpha(1f).setStartDelay(500).setDuration(500);
                 }else{
                     currentPlayer = 1;
+                    instructions.setText("It's YELLOW's turn");
                 }
 
             }else {
@@ -45,15 +54,47 @@ public class MainActivity extends AppCompatActivity {
                 playerHasWon = checkForWinner(yellowSpaces);
 
                 if (playerHasWon){
+                    instructions.setText("YELLOW has won!");
                     Log.i("MattInfo", "YELLOW has won!");
+                    playAgainButton.setVisibility(View.VISIBLE);
+                    playAgainButton.animate().alpha(1f).setStartDelay(500).setDuration(200);
                 }else{
                     currentPlayer = 0;
+                    instructions.setText("It's RED's turn");
                 }
             }
 
             current.animate().translationYBy(1000f).rotation(180).setDuration(500);
+
+            if (redSpaces.size() + yellowSpaces.size() == 9) {
+                instructions.setText("It's a cat's game");
+                playAgainButton.setVisibility(View.VISIBLE);
+                playAgainButton.animate().alpha(1f).setStartDelay(500).setDuration(200);
+            }
         }
 
+
+    }
+
+    public void playAgain(View view) {
+        Log.i("MattInfo", "Need to restart the game");
+        redSpaces = new HashSet<>();
+        yellowSpaces = new HashSet<>();
+        currentPlayer = 0;
+
+        TextView instructions = (TextView) findViewById(R.id.instructionsText);
+        Button playAgainButton = (Button) findViewById(R.id.playAgainButton);
+
+        instructions.setText("It's RED's turn");
+        playAgainButton.setVisibility(View.INVISIBLE);
+
+        GridLayout grid = (GridLayout) findViewById(R.id.gridLayout);
+
+        for (int i = 0, numChildren = grid.getChildCount(); i < numChildren; i++) {
+            ImageView image = (ImageView) grid.getChildAt(i);
+
+            image.setImageDrawable(null);
+        }
 
     }
 
