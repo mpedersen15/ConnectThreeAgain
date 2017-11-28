@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     Set<Integer> redSpaces = new HashSet<>();
     Set<Integer> yellowSpaces = new HashSet<>();
     int currentPlayer = 0; // 0 = RED, 1 = YELLOW
+    boolean gameOver = false;
 
     public void placePiece(View view) {
 
@@ -25,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
         TextView instructions = (TextView) findViewById(R.id.instructionsText);
         Button playAgainButton = (Button) findViewById(R.id.playAgainButton);
 
-        if (current.getDrawable() == null){ // only allow pieces to be placed on empty spaces
+
+        if (current.getDrawable() == null && !gameOver){ // only allow pieces to be placed on empty spaces
 
             current.setTranslationY(-1000f);
 
@@ -38,10 +40,12 @@ public class MainActivity extends AppCompatActivity {
                 playerHasWon = checkForWinner(redSpaces);
 
                 if (playerHasWon){
+                    gameOver = true;
                     Log.i("MattInfo", "RED has won!");
                     instructions.setText("RED has won!");
                     playAgainButton.setVisibility(View.VISIBLE);
                     playAgainButton.animate().alpha(1f).setStartDelay(500).setDuration(500);
+
                 }else{
                     currentPlayer = 1;
                     instructions.setText("It's YELLOW's turn");
@@ -54,10 +58,12 @@ public class MainActivity extends AppCompatActivity {
                 playerHasWon = checkForWinner(yellowSpaces);
 
                 if (playerHasWon){
+                    gameOver = true;
                     instructions.setText("YELLOW has won!");
                     Log.i("MattInfo", "YELLOW has won!");
                     playAgainButton.setVisibility(View.VISIBLE);
                     playAgainButton.animate().alpha(1f).setStartDelay(500).setDuration(200);
+
                 }else{
                     currentPlayer = 0;
                     instructions.setText("It's RED's turn");
@@ -95,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
 
             image.setImageDrawable(null);
         }
+
+        gameOver = false;
 
     }
 
